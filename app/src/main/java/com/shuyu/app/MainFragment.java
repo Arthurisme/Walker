@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.czt.mp3recorder.MP3Recorder;
+import com.piterwilson.audio.MP3RadioStreamDelegate;
+import com.piterwilson.audio.MP3RadioStreamPlayer;
 import com.shuyu.waveview.AudioPlayer;
 import com.shuyu.waveview.AudioWaveView;
 import com.shuyu.waveview.FileUtils;
@@ -29,6 +33,8 @@ import com.shuyu.waveview.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -37,8 +43,11 @@ import java.util.UUID;
  * Created by shuyu on 2016/12/16.
  */
 
-public class MainFragment extends Fragment implements View.OnClickListener {
-//    @BindView(R.id.audioWave)
+public class MainFragment extends Fragment implements MP3RadioStreamDelegate, View.OnClickListener {
+
+    private static final String LOG_TAG = MainFragment.class.getSimpleName();
+
+    //    @BindView(R.id.audioWave)
     AudioWaveView audioWave;
 //    @BindView(R.id.record)
     Button record;
@@ -70,6 +79,24 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     int duration;
     int curPosition;
 
+    //    @BindView(R.id.audioWave)
+    AudioWaveView audioWave2;
+    //    @BindView(R.id.activity_wave_play)
+    RelativeLayout activityWavePlay;
+    //    @BindView(R.id.playBtn)
+    Button playBtn;
+    //    @BindView(R.id.seekBar)
+    SeekBar seekBar;
+
+
+    MP3RadioStreamPlayer player;
+
+    Timer timer;
+
+    boolean playeEnd;
+
+    boolean seekBarTouch;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,13 +107,80 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         //binding view:
         audioWave = (AudioWaveView)view.findViewById (R.id.audioWave);
         record=(Button)view.findViewById(R.id.record);
+        record.setOnClickListener(this);
         stop=(Button)view.findViewById(R.id.stop);
+        stop.setOnClickListener(this);
+
         play=(Button)view.findViewById(R.id.play);
+        play.setOnClickListener(this);
+
         reset=(Button)view.findViewById(R.id.reset);
+        reset.setOnClickListener(this);
+
         wavePlay   =(Button)view.findViewById(R.id.wavePlay);
+        wavePlay.setOnClickListener(this);
+
         playText   =(TextView)view.findViewById(R.id.playText);
         colorImg   =(ImageView)view.findViewById(R.id.colorImg);
         recordPause   =(Button)view.findViewById(R.id.recordPause);
+        recordPause.setOnClickListener(this);
+
+
+        //binding view 2:
+        audioWave2 = (AudioWaveView)view.findViewById (R.id.audioWave2);
+        activityWavePlay=(RelativeLayout)view.findViewById(R.id.activity_wave_play);
+        playBtn=(Button)view.findViewById(R.id.playBtn);
+        playBtn.setOnClickListener(this);
+
+        seekBar=(SeekBar)view.findViewById(R.id.seekBar);
+
+
+
+
+
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                play();
+//            }
+//        }, 1000);
+//        playBtn.setEnabled(false);
+//        seekBar.setEnabled(false);
+
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                seekBarTouch = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                seekBarTouch = false;
+                if (!playeEnd) {
+                    player.seekTo(seekBar.getProgress());
+                }
+            }
+        });
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (playeEnd || player == null || !seekBar.isEnabled()) {
+                    return;
+                }
+                long position = player.getCurPosition();
+                if (position > 0 && !seekBarTouch) {
+                    seekBar.setProgress((int) position);
+                }
+            }
+        }, 1000, 1000);
 
 
 
@@ -126,6 +220,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        audioWave2.stopView();
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        stop();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (mIsRecord) {
@@ -140,6 +245,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        Log.d(LOG_TAG, "startCameraIntentCore:1");
+
+
         switch (view.getId()) {
             case R.id.record:
                 resolveRecord();
@@ -156,8 +264,65 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 resolvePlayWaveRecord();
             case R.id.recordPause:
                 resolvePause();
+
+            case R.id.playBtn:
+            {
+                Log.d(LOG_TAG, "playBtn:0");
+
+
+                {
+                    Log.d(LOG_TAG, "playBtn:T0");
+
+                    playBtn.setText("暂停");
+                    seekBar.setEnabled(true);
+                    play();
+
+                    
+
+                }
+
+
+//                if (player.isPause()) {
+//                    Log.d(LOG_TAG, "playBtn:2");
+//
+//                    playBtn.setText("暂停");
+//                    player.setPause(false);
+//                    seekBar.setEnabled(false);
+//                } else {
+//                    Log.d(LOG_TAG, "playBtn:3");
+//
+//                    playBtn.setText("播放");
+//                    player.setPause(true);
+//                    seekBar.setEnabled(true);
+//                }
+
+
+
+
+
+
+
+                if (playeEnd) {
+                    Log.d(LOG_TAG, "playBtn:1");
+
+                    stop();
+                    playBtn.setText("暂停");
+                    seekBar.setEnabled(true);
+                    play();
+                    return;
+                }
+
+
+
+            }
                 break;
         }
+
+
+
+
+
+
     }
 
     /**
@@ -391,4 +556,104 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         float fontScale = context.getResources().getDisplayMetrics().density;
         return (int) (dipValue * fontScale + 0.5f);
     }
+
+
+    private void play() {
+        if (player != null) {
+            player.stop();
+            player.release();
+            player = null;
+        }
+        player = new MP3RadioStreamPlayer();
+        //player.setUrlString(this, true, "http://www.stephaniequinn.com/Music/Commercial%20DEMO%20-%2005.mp3");
+//        player.setUrlString(getActivity().getIntent().getStringExtra("uri"));
+        player.setUrlString(filePath);
+        player.setDelegate(this);
+
+        int size = getScreenWidth(getActivity()) / dip2px(getActivity(), 1);//控件默认的间隔是1
+        player.setDataList(audioWave2.getRecList(), size);
+
+        //player.setStartWaveTime(5000);
+        //audioWave.setDrawBase(false);
+        audioWave2.setBaseRecorder(player);
+        audioWave2.startView();
+        try {
+            player.play();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void stop() {
+        player.stop();
+    }
+
+
+    /****************************************
+     * Delegate methods. These are all fired from a background thread so we have to call any GUI code on the main thread.
+     ****************************************/
+
+    @Override
+    public void onRadioPlayerPlaybackStarted(final MP3RadioStreamPlayer player) {
+        Log.i(LOG_TAG, "onRadioPlayerPlaybackStarted");
+        this.getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                playeEnd = false;
+                playBtn.setEnabled(true);
+                seekBar.setMax((int) player.getDuration());
+                seekBar.setEnabled(true);
+            }
+        });
+    }
+
+    @Override
+    public void onRadioPlayerStopped(MP3RadioStreamPlayer player) {
+        Log.i(LOG_TAG, "onRadioPlayerStopped");
+        this.getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                playeEnd = true;
+                playBtn.setText("播放");
+                playBtn.setEnabled(true);
+                seekBar.setEnabled(false);
+            }
+        });
+
+    }
+
+    @Override
+    public void onRadioPlayerError(MP3RadioStreamPlayer player) {
+        Log.i(LOG_TAG, "onRadioPlayerError");
+        this.getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                playeEnd = false;
+                playBtn.setEnabled(true);
+                seekBar.setEnabled(false);
+            }
+        });
+
+    }
+
+    @Override
+    public void onRadioPlayerBuffering(MP3RadioStreamPlayer player) {
+        Log.i(LOG_TAG, "onRadioPlayerBuffering");
+        this.getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                playBtn.setEnabled(false);
+                seekBar.setEnabled(false);
+            }
+        });
+
+    }
+
+
+
 }

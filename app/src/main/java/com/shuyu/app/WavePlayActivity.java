@@ -4,11 +4,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.piterwilson.audio.MP3RadioStreamDelegate;
 import com.piterwilson.audio.MP3RadioStreamPlayer;
@@ -18,20 +17,19 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 
 import static com.shuyu.app.MainFragment.dip2px;
 import static com.shuyu.app.MainFragment.getScreenWidth;
 
 
-public class WavePlayActivity extends AppCompatActivity implements MP3RadioStreamDelegate {
+public class WavePlayActivity extends AppCompatActivity implements MP3RadioStreamDelegate,View.OnClickListener  {
 
-    private final static String TAG = "WavePlayActivity";
+     private static final String LOG_TAG = WavePlayActivity.class.getSimpleName();
 
-//    @BindView(R.id.audioWave)
-    AudioWaveView audioWave;
+
+    //    @BindView(R.id.audioWave)
+    AudioWaveView audioWave2;
 //    @BindView(R.id.activity_wave_play)
     RelativeLayout activityWavePlay;
 //    @BindView(R.id.playBtn)
@@ -54,9 +52,11 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
         setContentView(R.layout.activity_wave_play);
 //        ButterKnife.bind(this);
         //binding view:
-        audioWave = (AudioWaveView)findViewById (R.id.audioWave);
+        audioWave2 = (AudioWaveView)findViewById (R.id.audioWave2);
         activityWavePlay=(RelativeLayout)findViewById(R.id.activity_wave_play);
         playBtn=(Button)findViewById(R.id.playBtn);
+        playBtn.setOnClickListener(this);
+
         seekBar=(SeekBar)findViewById(R.id.seekBar);
 
 
@@ -112,7 +112,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        audioWave.stopView();
+        audioWave2.stopView();
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -120,8 +120,10 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
         stop();
     }
 
-    @OnClick(R.id.playBtn)
-    public void onClick() {
+
+
+    @Override
+    public void onClick(View view) {
 
         if (playeEnd) {
             stop();
@@ -155,12 +157,12 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
         player.setDelegate(this);
 
         int size = getScreenWidth(this) / dip2px(this, 1);//控件默认的间隔是1
-        player.setDataList(audioWave.getRecList(), size);
+        player.setDataList(audioWave2.getRecList(), size);
 
         //player.setStartWaveTime(5000);
         //audioWave.setDrawBase(false);
-        audioWave.setBaseRecorder(player);
-        audioWave.startView();
+        audioWave2.setBaseRecorder(player);
+        audioWave2.startView();
         try {
             player.play();
         } catch (IOException e) {
@@ -180,7 +182,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
 
     @Override
     public void onRadioPlayerPlaybackStarted(final MP3RadioStreamPlayer player) {
-        Log.i(TAG, "onRadioPlayerPlaybackStarted");
+        Log.i(LOG_TAG, "onRadioPlayerPlaybackStarted");
         this.runOnUiThread(new Runnable() {
 
             @Override
@@ -195,7 +197,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
 
     @Override
     public void onRadioPlayerStopped(MP3RadioStreamPlayer player) {
-        Log.i(TAG, "onRadioPlayerStopped");
+        Log.i(LOG_TAG, "onRadioPlayerStopped");
         this.runOnUiThread(new Runnable() {
 
             @Override
@@ -211,7 +213,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
 
     @Override
     public void onRadioPlayerError(MP3RadioStreamPlayer player) {
-        Log.i(TAG, "onRadioPlayerError");
+        Log.i(LOG_TAG, "onRadioPlayerError");
         this.runOnUiThread(new Runnable() {
 
             @Override
@@ -226,7 +228,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
 
     @Override
     public void onRadioPlayerBuffering(MP3RadioStreamPlayer player) {
-        Log.i(TAG, "onRadioPlayerBuffering");
+        Log.i(LOG_TAG, "onRadioPlayerBuffering");
         this.runOnUiThread(new Runnable() {
 
             @Override
@@ -237,5 +239,6 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
         });
 
     }
+
 
 }
