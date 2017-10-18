@@ -5,8 +5,10 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.piterwilson.audio.MP3RadioStreamDelegate;
 import com.piterwilson.audio.MP3RadioStreamPlayer;
@@ -28,13 +30,13 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
 
     private final static String TAG = "WavePlayActivity";
 
-    @BindView(R.id.audioWave)
+//    @BindView(R.id.audioWave)
     AudioWaveView audioWave;
-    @BindView(R.id.activity_wave_play)
+//    @BindView(R.id.activity_wave_play)
     RelativeLayout activityWavePlay;
-    @BindView(R.id.playBtn)
+//    @BindView(R.id.playBtn)
     Button playBtn;
-    @BindView(R.id.seekBar)
+//    @BindView(R.id.seekBar)
     SeekBar seekBar;
 
 
@@ -50,7 +52,17 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wave_play);
-        ButterKnife.bind(this);
+//        ButterKnife.bind(this);
+        //binding view:
+        audioWave = (AudioWaveView)findViewById (R.id.audioWave);
+        activityWavePlay=(RelativeLayout)findViewById(R.id.activity_wave_play);
+        playBtn=(Button)findViewById(R.id.playBtn);
+        seekBar=(SeekBar)findViewById(R.id.seekBar);
+
+
+
+
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

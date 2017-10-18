@@ -31,32 +31,30 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+
 
 /**
  * Created by shuyu on 2016/12/16.
  */
 
-public class MainFragment extends Fragment {
-    @BindView(R.id.audioWave)
+public class MainFragment extends Fragment implements View.OnClickListener {
+//    @BindView(R.id.audioWave)
     AudioWaveView audioWave;
-    @BindView(R.id.record)
+//    @BindView(R.id.record)
     Button record;
-    @BindView(R.id.stop)
+//    @BindView(R.id.stop)
     Button stop;
-    @BindView(R.id.play)
+//    @BindView(R.id.play)
     Button play;
-    @BindView(R.id.reset)
+//    @BindView(R.id.reset)
     Button reset;
-    @BindView(R.id.wavePlay)
+//    @BindView(R.id.wavePlay)
     Button wavePlay;
-    @BindView(R.id.playText)
+//    @BindView(R.id.playText)
     TextView playText;
-    @BindView(R.id.colorImg)
+//    @BindView(R.id.colorImg)
     ImageView colorImg;
-    @BindView(R.id.recordPause)
+//    @BindView(R.id.recordPause)
     Button recordPause;
 
 
@@ -76,7 +74,23 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        ButterKnife.bind(this, view);
+//        ButterKnife.bind(this, view);
+
+
+        //binding view:
+        audioWave = (AudioWaveView)view.findViewById (R.id.audioWave);
+        record=(Button)view.findViewById(R.id.record);
+        stop=(Button)view.findViewById(R.id.stop);
+        play=(Button)view.findViewById(R.id.play);
+        reset=(Button)view.findViewById(R.id.reset);
+        wavePlay   =(Button)view.findViewById(R.id.wavePlay);
+        playText   =(TextView)view.findViewById(R.id.playText);
+        colorImg   =(ImageView)view.findViewById(R.id.colorImg);
+        recordPause   =(Button)view.findViewById(R.id.recordPause);
+
+
+
+
         return view;
     }
 
@@ -123,7 +137,8 @@ public class MainFragment extends Fragment {
         }
     }
 
-    @OnClick({R.id.record, R.id.stop, R.id.play, R.id.reset, R.id.wavePlay, R.id.recordPause})
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.record:

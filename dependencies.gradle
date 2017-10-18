@@ -20,8 +20,7 @@ ext {
     otherLibraryVersion = '26.0.1'
 
     //ViewLibraries
-    butterKnifeVersion = '8.2.1'
-    videocache = '2.6.4'
+     videocache = '2.6.4'
 
     androidDependencies = [
             recyclerView: "com.android.support:recyclerview-v7:${supportLibraryVersion}",
@@ -32,8 +31,7 @@ ext {
     ]
 
     viewDependencies = [
-            butterKnife     : "com.jakewharton:butterknife:${butterKnifeVersion}",
-            apt_butterKnife : "com.jakewharton:butterknife-compiler:${butterKnifeVersion}",
-            videocache: "com.danikula:videocache:${videocache}",
+
+             videocache: "com.danikula:videocache:${videocache}",
     ]
 }

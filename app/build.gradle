@@ -28,7 +28,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     def viewDependencies = rootProject.ext.viewDependencies
-    apt viewDependencies.apt_butterKnife
-    compile viewDependencies.butterKnife
     compile project(':waveview')
 }
