@@ -5,17 +5,65 @@
     android:layout_height="match_parent">
 
 
-    <com.shuyu.waveview.AudioWaveView
-        android:id="@+id/audioWave"
+
+
+
+    <RelativeLayout
+
+        android:id="@+id/wave_and_info_section"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        waveview:waveColor="#FAFFFFFF" />
+        android:layout_height="180dp"
+        android:background="@color/primary_material_dark">
+
+
+        <com.shuyu.waveview.AudioWaveView
+            android:id="@+id/audioWaveForRecord"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+
+
+            waveview:waveColor="#FAFFFFFF" />
+
+
+        <com.shuyu.waveview.AudioWaveView
+            android:id="@+id/audioWaveForPlay"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+             waveview:waveColor="#FAFFFFFF" />
+
+
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/audioWaveForPlay"
+            android:visibility="gone"
+
+            android:layout_marginTop="10dp" />
+
+
+        <TextView
+            android:id="@+id/playText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             android:layout_marginTop="30dp"
+            android:layout_below="@+id/audioWaveForPlay"
+
+            android:gravity="bottom|center"
+            android:text=""
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+
 
     <LinearLayout
         android:id="@+id/btn_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_below="@+id/audioWave"
+        android:layout_below="@+id/wave_and_info_section"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="15dp"
@@ -26,7 +74,8 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="录音" />
+            android:textSize="7dp"
+            android:text="Start Record" />
 
         <Button
             android:id="@+id/recordPause"
@@ -35,42 +84,51 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:text="暂停" />
+            android:textSize="7dp"
+
+            android:text="Pause Record" />
 
         <Button
             android:id="@+id/stop"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="停止" />
+            android:textSize="7dp"
+
+            android:text="Stop Record" />
 
         <Button
-            android:id="@+id/play"
+            android:id="@+id/play_without_waveform"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:text="播放" />
+            android:textSize="7dp"
+
+            android:text="Play" />
+
+        <Button
+            android:id="@+id/playBtn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:textSize="7dp"
+
+            android:text="Stop Play" />
 
         <Button
             android:id="@+id/reset"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="重置" />
+            android:textSize="7dp"
+
+            android:text="Reset" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/playText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_layout"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp" />
 
     <LinearLayout
         android:id="@+id/btn_layout_2"
@@ -87,7 +145,9 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:text="波形播放" />
+            android:textSize="7dp"
+
+            android:text="Show Play in a new window with waveform" />
     </LinearLayout>
 
     <ImageView
@@ -100,34 +160,6 @@
 
 
 
-    <RelativeLayout
-        xmlns:waveview="http://schemas.android.com/apk/res-auto"
-        android:layout_below="@+id/colorImg"
-        android:id="@+id/activity_wave_play"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/primary_material_dark">
 
-        <com.shuyu.waveview.AudioWaveView
-            android:id="@+id/audioWave2"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            waveview:waveColor="#FAFFFFFF" />
-
-        <Button
-            android:id="@+id/playBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/audioWave2"
-            android:layout_marginTop="10dp"
-            android:text="暂停" />
-
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/playBtn"
-            android:layout_marginTop="10dp" />
-    </RelativeLayout>
 
 </RelativeLayout>

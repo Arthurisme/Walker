@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:waveview="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_wave_play"
+    android:id="@+id/wave_and_info_section"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_material_dark">
 
     <com.shuyu.waveview.AudioWaveView
-        android:id="@+id/audioWave2"
+        android:id="@+id/audioWaveForPlay"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         waveview:waveColor="#FAFFFFFF" />
@@ -16,7 +16,7 @@
         android:id="@+id/playBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/audioWave"
+        android:layout_below="@+id/audioWaveForRecord"
         android:layout_marginTop="10dp"
         android:text="暂停" />
 

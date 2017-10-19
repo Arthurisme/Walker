@@ -478,15 +478,21 @@ public class MP3RadioStreamPlayer extends BaseRecorder {
      * Stops playback
      */
     public void stop() {
+        Log.d(LOG_TAG, "stop:0::release test 1");
+
         pause = false;
         doStop = true;
         seekOffset = 0;
         seekOffsetFlag = false;
         if (myTimer != null) {
+            Log.d(LOG_TAG, "stop:0::release test 2");
+
             myTimer.cancel();
             myTimer = null;
         }
         if (myTimerTask != null) {
+            Log.d(LOG_TAG, "stop:0::release test 3");
+
             myTimerTask.cancel();
             myTimerTask = null;
         }

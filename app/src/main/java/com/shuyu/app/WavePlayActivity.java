@@ -29,7 +29,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
 
 
     //    @BindView(R.id.audioWave)
-    AudioWaveView audioWave2;
+    AudioWaveView audioWaveForPlay;
 //    @BindView(R.id.activity_wave_play)
     RelativeLayout activityWavePlay;
 //    @BindView(R.id.playBtn)
@@ -52,8 +52,8 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
         setContentView(R.layout.activity_wave_play);
 //        ButterKnife.bind(this);
         //binding view:
-        audioWave2 = (AudioWaveView)findViewById (R.id.audioWave2);
-        activityWavePlay=(RelativeLayout)findViewById(R.id.activity_wave_play);
+        audioWaveForPlay = (AudioWaveView)findViewById (R.id.audioWaveForPlay);
+        activityWavePlay=(RelativeLayout)findViewById(R.id.wave_and_info_section);
         playBtn=(Button)findViewById(R.id.playBtn);
         playBtn.setOnClickListener(this);
 
@@ -112,7 +112,7 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        audioWave2.stopView();
+        audioWaveForPlay.stopView();
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -157,12 +157,12 @@ public class WavePlayActivity extends AppCompatActivity implements MP3RadioStrea
         player.setDelegate(this);
 
         int size = getScreenWidth(this) / dip2px(this, 1);//控件默认的间隔是1
-        player.setDataList(audioWave2.getRecList(), size);
+        player.setDataList(audioWaveForPlay.getRecList(), size);
 
         //player.setStartWaveTime(5000);
         //audioWave.setDrawBase(false);
-        audioWave2.setBaseRecorder(player);
-        audioWave2.startView();
+        audioWaveForPlay.setBaseRecorder(player);
+        audioWaveForPlay.startView();
         try {
             player.play();
         } catch (IOException e) {
