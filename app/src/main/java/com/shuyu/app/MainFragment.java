@@ -222,7 +222,6 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy:0::release test 1");
 
-        audioWaveForPlay.stopView();
 
 
         if (timer != null) {
@@ -239,6 +238,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
         releasePlayer();
         Log.d(LOG_TAG, "onDestroy:0::release test 5");
 
+        audioWaveForPlay.stopView();
 
 
     }
