@@ -58,7 +58,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
 //    @BindView(R.id.wavePlay)
     Button wavePlay;
 //    @BindView(R.id.playText)
-    TextView playText;
+    TextView playSimpleInfoText;
 //    @BindView(R.id.colorImg)
     ImageView colorImg;
 //    @BindView(R.id.recordPause)
@@ -72,7 +72,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
 
     boolean mIsRecord = false;
 
-    boolean mIsPlay = false;
+    boolean mIsPlaySimple = false;
 
     int duration;
     int curPosition;
@@ -118,7 +118,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
         wavePlay   =(Button)view.findViewById(R.id.wavePlay);
         wavePlay.setOnClickListener(this);
 
-        playText   =(TextView)view.findViewById(R.id.playText);
+        playSimpleInfoText =(TextView)view.findViewById(R.id.playText);
         colorImg   =(ImageView)view.findViewById(R.id.colorImg);
         recordPause   =(Button)view.findViewById(R.id.recordPause);
         recordPause.setOnClickListener(this);
@@ -198,15 +198,15 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
                 switch (msg.what) {
                     case AudioPlayer.HANDLER_CUR_TIME://更新的时间
                         curPosition = (int) msg.obj;
-                        playText.setText(toTime(curPosition) + " / " + toTime(duration));
+                        playSimpleInfoText.setText(toTime(curPosition) + " / " + toTime(duration));
                         break;
                     case AudioPlayer.HANDLER_COMPLETE://播放结束
-                        playText.setText(" ");
-                        mIsPlay = false;
+                        playSimpleInfoText.setText(" ");
+                        mIsPlaySimple = false;
                         break;
                     case AudioPlayer.HANDLER_PREPARED://播放开始
                         duration = (int) msg.obj;
-                        playText.setText(toTime(curPosition) + " / " + toTime(duration));
+                        playSimpleInfoText.setText(toTime(curPosition) + " / " + toTime(duration));
                         break;
                     case AudioPlayer.HANDLER_ERROR://播放错误
                         resolveResetPlay();
@@ -223,6 +223,8 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
         Log.d(LOG_TAG, "onDestroy:0::release test 1");
 
         audioWaveForPlay.stopView();
+
+
         if (timer != null) {
             Log.d(LOG_TAG, "onDestroy:0::release test 2");
 
@@ -237,6 +239,8 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
         releasePlayer();
         Log.d(LOG_TAG, "onDestroy:0::release test 5");
 
+
+
     }
 
     @Override
@@ -249,7 +253,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
 
             resolveStopRecord();
         }
-        if (mIsPlay) {
+        if (mIsPlaySimple) {
             Log.d(LOG_TAG, "onPause:0::release test 2");
 
             audioPlayerSimple.pause();
@@ -306,7 +310,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
             case R.id.play_without_waveform:
             {
                 Log.d(LOG_TAG, "onClick:play:0");
-                resolvePlayRecord();
+                resolvePlaySimple();
 
             }
                 break;
@@ -321,7 +325,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
             case R.id.wavePlay:
             {
                 Log.d(LOG_TAG, "onClick:wavePlay:0");
-                resolvePlayWaveRecord();
+                resolvePlayWaveRecordInNewActivity();
             }
             break;
 
@@ -493,26 +497,26 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
     /**
      * 播放
      */
-    private void resolvePlayRecord() {
+    private void resolvePlaySimple() {
         if (TextUtils.isEmpty(filePath) || !new File(filePath).exists()) {
             Toast.makeText(getActivity(), "No file find", Toast.LENGTH_SHORT).show();
             return;
         }
-        playText.setText(" ");
-        mIsPlay = true;
+        playSimpleInfoText.setText(" ");
+        mIsPlaySimple = true;
         audioPlayerSimple.playUrl(filePath);
-        resolvePlayUI();
+        resolvePlaySimpleUI();
     }
 
     /**
      * 播放
      */
-    private void resolvePlayWaveRecord() {
+    private void resolvePlayWaveRecordInNewActivity() {
         if (TextUtils.isEmpty(filePath) || !new File(filePath).exists()) {
             Toast.makeText(getActivity(), "No file find", Toast.LENGTH_SHORT).show();
             return;
         }
-        resolvePlayUI();
+        resolvePlaySimpleUI();
         Intent intent = new Intent(getActivity(), WavePlayActivity.class);
         intent.putExtra("uri", filePath);
         startActivity(intent);
@@ -523,9 +527,9 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
      */
     private void resolveResetPlay() {
         filePath = "";
-        playText.setText("");
-        if (mIsPlay) {
-            mIsPlay = false;
+        playSimpleInfoText.setText("");
+        if (mIsPlaySimple) {
+            mIsPlaySimple = false;
             audioPlayerSimple.pause();
         }
         resolveNormalUI();
@@ -581,7 +585,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
         reset.setEnabled(true);
     }
 
-    private void resolvePlayUI() {
+    private void resolvePlaySimpleUI() {
         record.setEnabled(false);
         stop.setEnabled(false);
         recordPause.setEnabled(false);
@@ -668,7 +672,7 @@ public class MainFragment extends Fragment implements MP3RadioStreamDelegate, Vi
 
         if(player!=null){
             Log.d(LOG_TAG, "stopPlayer:0::release test 2");
-
+//            player.setPause(true);// test 176.
             player.stop();
 
         }

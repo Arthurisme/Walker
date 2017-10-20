@@ -32,6 +32,7 @@ import java.util.List;
  */
 
 public class AudioWaveView extends View {
+    private static final String LOG_TAG = AudioWaveView.class.getSimpleName();
 
 
     public static final String MAX = "max_volume"; //map中的key
@@ -119,12 +120,16 @@ public class AudioWaveView extends View {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        Log.d(LOG_TAG, "onDetachedFromWindow:mBackgroundBitmap.isRecycled()= "+mBackgroundBitmap.isRecycled());
+
         mIsDraw = false;
         if (mBitmap != null && !mBitmap.isRecycled()) {
-            mBitmap.recycle();
+//            mBitmap.recycle();
+//            mBitmap=null;
         }
         if (mBackgroundBitmap != null && !mBackgroundBitmap.isRecycled()) {
-            mBackgroundBitmap.recycle();
+//            mBackgroundBitmap.recycle();
+//            mBackgroundBitmap=null;
         }
     }
 
@@ -239,8 +244,24 @@ public class AudioWaveView extends View {
                         }
                     }
                     synchronized (mLock) {
+
+
                         mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                        mCanvas.drawBitmap(mBackgroundBitmap, 0, 0, mPaint);
+
+
+//                        if (mBackgroundBitmap != null && mBackgroundBitmap.isRecycled()) {
+//                            mBackgroundBitmap = null;
+//                        }
+
+                        //test 176.
+                        if(mBackgroundBitmap==null){
+                            Log.d(LOG_TAG, "drawThread:mBackgroundBitmap==null is "+(mBackgroundBitmap==null));
+
+                        }else {
+                             mCanvas.drawBitmap(mBackgroundBitmap, 0, 0, mPaint);
+
+                        }
+
                     }
 
                     Message msg = new Message();
@@ -531,4 +552,7 @@ public class AudioWaveView extends View {
     public void setDrawStartOffset(int drawStartOffset) {
         this.mDrawStartOffset = drawStartOffset;
     }
+
+
+
 }
